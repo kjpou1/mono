@@ -226,6 +226,10 @@ int mono_interp_traceopt = 0;
 
 #endif
 
+#ifdef HOST_WASM
+static gboolean wasm_init_done = FALSE;
+#endif
+
 static GSList*
 clear_resume_state (ThreadContext *context, GSList *finally_ips)
 {
@@ -3241,6 +3245,20 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 		frame->ip = NULL;
 		MonoException *ex = do_transform_method (frame, context);
+#ifdef HOST_WASM
+		if (!wasm_init_done && g_hasenv("__WASM_SPINNING_UP___"))
+		{
+			char *mn2 = mono_method_full_name (frame->imethod->method, TRUE);
+			if (!strcmp (g_getenv("__WASM_SPINNING_UP___"), mn2)) {
+				fprintf (stdout, "(%p) Transformed first called %s\n", mono_thread_internal_current (), mn2);
+				g_setenv ("__WASM_SPINNING_UP___", "____WASM_INIT____", 1);
+				wasm_init_done = TRUE;
+			}
+			//fprintf (stdout, "(%p) Transformed %s\n", mono_thread_internal_current (), mn2);
+			g_free (mn2);		
+		}
+#endif
+
 		if (ex)
 			THROW_EX (ex, NULL);
 		EXCEPTION_CHECKPOINT;

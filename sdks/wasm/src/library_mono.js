@@ -94,7 +94,7 @@ var MonoSupportLib = {
 		mono_wasm_runtime_ready: function () {
 			console.log (">>mono_wasm_runtime_ready");
 			this.mono_wasm_runtime_is_ready = true;
-			debugger;
+			//debugger;
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
@@ -376,7 +376,16 @@ var MonoSupportLib = {
 	mono_wasm_fire_bp: function () {
 		console.log ("mono_wasm_fire_bp");
 		debugger;
+	},
+
+	// Wasm has initialized.  
+	// This will be set after the first user code into wasm
+	// See driver.c method mono_wasm_invoke_method which calls this routine.
+	mono_wasm_set_wasm_initialized: function () {
+		console.log("setting us up for success");
+		MONO.mono_wasm_startup_initialized = true;
 	}
+
 };
 
 autoAddDeps(MonoSupportLib, '$MONO')

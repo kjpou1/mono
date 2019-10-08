@@ -8,6 +8,7 @@
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tokentype.h>
+#include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
@@ -64,6 +65,9 @@ void mono_trace_init (void);
 
 #define g_new(type, size)  ((type *) malloc (sizeof (type) * (size)))
 #define g_new0(type, size) ((type *) calloc (sizeof (type), (size)))
+
+static int mono_invoke_first_time = 1;
+extern void* mono_wasm_set_wasm_initialized ();
 
 static char*
 m_strdup (const char *str)
@@ -399,10 +403,25 @@ mono_wasm_assembly_find_method (MonoClass *klass, const char *name, int argument
 EMSCRIPTEN_KEEPALIVE MonoObject*
 mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[], int* got_exception)
 {
+	if (mono_invoke_first_time) {
+		char *mn;
+		mn = mono_method_full_name (method, 1);
+		monoeg_g_setenv("__WASM_SPINNING_UP___", mn, 1);
+		fprintf(stdout, "driver::mono_wasm_invoke_method entering %s Setting Environment to: %s\n", mn, monoeg_g_getenv("__WASM_SPINNING_UP___"));
+		mono_free(mn);
+	}
+
 	MonoObject *exc = NULL;
 	MonoObject *res = mono_runtime_invoke (method, this_arg, params, &exc);
-	*got_exception = 0;
 
+	if (mono_invoke_first_time) {
+		if (!strcmp (monoeg_g_getenv("__WASM_SPINNING_UP___"), "____WASM_INIT____")) {
+			mono_wasm_set_wasm_initialized ();
+			mono_invoke_first_time = 0;
+		}
+	}
+
+	*got_exception = 0;
 	if (exc) {
 		*got_exception = 1;
 
