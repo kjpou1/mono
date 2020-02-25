@@ -1,6 +1,11 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	public abstract class CoreObject : JSObject {
+#if SYSTEM_NET_HTTP
+	internal
+#else
+	public
+#endif
+		abstract class CoreObject : JSObject {
 
 		protected CoreObject (int js_handle) : base (js_handle)
 		{

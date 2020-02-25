@@ -3,7 +3,12 @@ using System.Runtime.InteropServices;
 
 namespace WebAssembly {
 
-	public class AnyRef {
+	#if SYSTEM_NET_HTTP
+	internal
+#else
+	public
+#endif
+		class AnyRef {
 
 		public int JSHandle { get; internal set; }
 		internal GCHandle Handle;

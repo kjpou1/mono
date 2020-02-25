@@ -1,6 +1,11 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	public sealed class Int8Array : TypedArray<Int8Array, sbyte> {
+	#if SYSTEM_NET_HTTP
+	internal
+#else
+	public
+#endif
+		sealed class Int8Array : TypedArray<Int8Array, sbyte> {
 		public Int8Array ()
 		{ }
 

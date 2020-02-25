@@ -9,7 +9,12 @@ namespace WebAssembly {
 	/// <summary>
 	///   Provides access to the Mono/WebAssembly runtime to perform tasks like invoking JavaScript functions and retrieving global variables.
 	/// </summary>
-	public sealed class Runtime {
+	#if SYSTEM_NET_HTTP
+	internal
+#else
+	public
+#endif
+		sealed class Runtime {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string InvokeJS (string str, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -104,7 +109,7 @@ namespace WebAssembly {
 		}
 
 		/// <summary>
-		/// Creates a new JavaScript object 
+		/// Creates a new JavaScript object
 		/// </summary>
 		/// <returns>The JSO bject.</returns>
 		/// <param name="js_func_ptr">Js func ptr.</param>
@@ -195,7 +200,7 @@ namespace WebAssembly {
 				if (exception != 0)
 					throw new JSException ($"Error releasing handle on (js-obj js '{obj.JSHandle}' mono '{(IntPtr)obj.Handle} raw '{obj.RawObject != null})");
 
-				// Calling Release Handle above only removes the reference from the JavaScript side but does not 
+				// Calling Release Handle above only removes the reference from the JavaScript side but does not
 				// release the bridged JSObject associated with the raw object so we have to do that ourselves.
 				obj.JSHandle = -1;
 				obj.IsDisposed = true;
@@ -297,7 +302,7 @@ namespace WebAssembly {
 					return true;
 			}
 			return false;
-		
+
 		}
 
 		static object GetCoreType (string coreObj)
@@ -361,7 +366,7 @@ namespace WebAssembly {
 					res += "s";
 					break;
 				default:
-					if (t == typeof(IntPtr)) { 
+					if (t == typeof(IntPtr)) {
  						res += "i";
 					} else if (t == typeof (Uri)) {
 						res += "u";
@@ -402,7 +407,7 @@ namespace WebAssembly {
 				try {
 					if (task.Exception == null) {
 						var resultProperty = task.GetType ().GetProperty("Result");
-						
+
 						if (resultProperty == null)
 							cont_obj.Invoke ("resolve", (object[])null);
 						else
@@ -427,10 +432,10 @@ namespace WebAssembly {
 		/// </remarks>
 		/// <returns>
 		///   <para>
-		///     The return value can either be a primitive (string, int, double), a 
-		///     <see cref="T:WebAssembly.JSObject"/> for JavaScript objects, a 
+		///     The return value can either be a primitive (string, int, double), a
+		///     <see cref="T:WebAssembly.JSObject"/> for JavaScript objects, a
 		///     <see cref="T:System.Threading.Tasks.Task"/>(object) for JavaScript promises, an array of
-		///     a byte, int or double (for Javascript objects typed as ArrayBuffer) or a 
+		///     a byte, int or double (for Javascript objects typed as ArrayBuffer) or a
 		///     <see cref="T:System.Func"/> to represent JavaScript functions.  The specific version of
 		///     the Func that will be returned depends on the parameters of the Javascript function
 		///     and return value.

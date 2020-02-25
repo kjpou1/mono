@@ -2,7 +2,12 @@
 
 
 namespace WebAssembly {
-	public interface IJSObject {
+	#if SYSTEM_NET_HTTP
+	internal
+#else
+	public
+#endif
+		interface IJSObject {
 		int JSHandle { get; }
 		int Length { get; }
 	}
@@ -10,7 +15,12 @@ namespace WebAssembly {
 
 
 namespace WebAssembly.Core {
-	public interface ITypedArray {
+	#if SYSTEM_NET_HTTP
+	internal
+#else
+	public
+#endif
+		interface ITypedArray {
 		int BytesPerElement { get; }
 		string Name { get; }
 		int ByteLength { get; }
@@ -24,7 +34,12 @@ namespace WebAssembly.Core {
 		TypedArrayTypeCode GetTypedArrayType ();
 	}
 
-	public interface ITypedArray<T, U> where U : struct {
+	#if SYSTEM_NET_HTTP
+	internal
+#else
+	public
+#endif
+		interface ITypedArray<T, U> where U : struct {
 
 		T Slice ();
 		T Slice (int begin);

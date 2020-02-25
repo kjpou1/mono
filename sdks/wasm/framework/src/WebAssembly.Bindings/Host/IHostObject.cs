@@ -1,6 +1,11 @@
 ﻿using System;
 namespace WebAssembly.Host {
-	public interface IHostObject {
+	#if SYSTEM_NET_HTTP
+	internal
+#else
+	public
+#endif
+		interface IHostObject {
 
 	}
 }
