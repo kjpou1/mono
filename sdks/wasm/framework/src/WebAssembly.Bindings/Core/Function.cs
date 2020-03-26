@@ -3,12 +3,7 @@ namespace WebAssembly.Core {
 	/// <summary>
 	/// The Function constructor creates a new Function object. Calling the constructor directly can create functions dynamically, but suffers from security and similar (but far less significant) performance issues similar to eval. However, unlike eval, the Function constructor allows executing code in the global scope, prompting better programming habits and allowing for more efficient code minification.
 	/// </summary>
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		class Function : CoreObject {
+	public class Function : CoreObject {
 		public Function (params object [] args) : base (Runtime.New<Function> (args))
 		{ }
 

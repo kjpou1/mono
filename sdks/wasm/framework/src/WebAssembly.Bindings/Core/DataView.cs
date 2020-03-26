@@ -4,12 +4,7 @@ namespace WebAssembly.Core {
 	/// The DataView view provides a low-level interface for reading and writing multiple number types in a 
     	/// binary <see cref="T:WebAssembly.Core.ArrayBuffer"/>, without having to care about the platform's endianness.
 	/// </summary>
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		class DataView : CoreObject {
+	public class DataView : CoreObject {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:WebAssembly.Core.DataView"/> class.
 		/// </summary>

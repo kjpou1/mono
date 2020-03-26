@@ -6,12 +6,7 @@ namespace WebAssembly.Core {
 	/// <summary>
 	/// Represents a JavaScript TypedArray.
 	/// </summary>
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		abstract class TypedArray<T, U> : CoreObject, ITypedArray, ITypedArray<T, U> where U : struct {
+	public abstract class TypedArray<T, U> : CoreObject, ITypedArray, ITypedArray<T, U> where U : struct {
 		protected TypedArray () : base (Runtime.New<T> ())
 		{ }
 		protected TypedArray (int length) : base (Runtime.New<T> (length))

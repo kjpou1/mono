@@ -1,11 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Host {
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		abstract class HostObjectBase : JSObject, IHostObject {
+	public abstract class HostObjectBase : JSObject, IHostObject {
 
 		protected HostObjectBase (int js_handle) : base (js_handle)
 		{

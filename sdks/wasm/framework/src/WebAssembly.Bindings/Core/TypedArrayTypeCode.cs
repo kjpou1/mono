@@ -1,11 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		enum TypedArrayTypeCode {
+	public enum TypedArrayTypeCode {
 		Int8Array = 5,
 		Uint8Array = 6,
 		Int16Array = 7,

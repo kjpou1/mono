@@ -1,11 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		sealed class Float64Array : TypedArray<Float64Array, double> {
+	public sealed class Float64Array : TypedArray<Float64Array, double> {
 		public Float64Array () { }
 
 		public Float64Array (int length) : base (length) { }

@@ -2,12 +2,7 @@
 using System.Runtime.InteropServices;
 
 namespace WebAssembly.Core {
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		sealed class Uint8ClampedArray : TypedArray<Uint8ClampedArray, byte> {
+	public sealed class Uint8ClampedArray : TypedArray<Uint8ClampedArray, byte> {
 		public Uint8ClampedArray ()
 		{ }
 

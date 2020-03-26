@@ -1,11 +1,6 @@
 ﻿using System;
 namespace WebAssembly {
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		enum ConvertEnum {
+	public enum ConvertEnum {
 		Default,
 		ToLower,
 		ToUpper,
@@ -14,13 +9,7 @@ namespace WebAssembly {
 
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Field,
 			AllowMultiple = true, Inherited = false)]
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		class ExportAttribute : Attribute {
-
+	public class ExportAttribute : Attribute {
 		public ExportAttribute () : this (null, null)
 		{
 		}

@@ -1,11 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		sealed class Uint32Array : TypedArray<Uint32Array, uint> {
+	public sealed class Uint32Array : TypedArray<Uint32Array, uint> {
 		public Uint32Array () { }
 
 		public Uint32Array (int length) : base (length) { }

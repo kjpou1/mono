@@ -6,12 +6,7 @@ namespace WebAssembly {
 	///   JSObjects are wrappers for a native JavaScript object, and
 	///   they retain a reference to the JavaScript object for the lifetime of this C# object.
 	/// </summary>
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		class JSObject : AnyRef, IJSObject, IDisposable {
+	public class JSObject : AnyRef, IJSObject, IDisposable {
 		internal object RawObject;
 
 		// to detect redundant calls

@@ -173,7 +173,7 @@ namespace System.Net.Http
 					wasmHttpReadStream?.Dispose ();
 				}));
 
-				var args = new WebAssembly.Core.Array();
+				var args = new Core.Array();
 				args.Push (request.RequestUri.ToString ());
 				args.Push (requestObject);
 

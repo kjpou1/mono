@@ -1,11 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		class ArrayBuffer : CoreObject {
+	public class ArrayBuffer : CoreObject {
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:WebAssembly.Core.ArrayBuffer"/> class.

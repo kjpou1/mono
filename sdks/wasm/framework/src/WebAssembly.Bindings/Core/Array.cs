@@ -1,12 +1,7 @@
 ﻿using System;
 
 namespace WebAssembly.Core {
-	#if SYSTEM_NET_HTTP
-	internal
-#else
-	public
-#endif
-		class Array : CoreObject {
+	public class Array : CoreObject {
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:WebAssembly.Core.Array"/> class.
