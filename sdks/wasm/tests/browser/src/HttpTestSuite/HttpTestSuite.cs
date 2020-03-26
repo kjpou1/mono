@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using System.Net.Http.WebAssemblyHttpHandler;
 using System.Threading.Tasks;
 using WebAssembly;
 using System.Threading;
@@ -20,7 +19,8 @@ namespace TestSuite
 
         public static bool IsStreamingEnabled()
         {
-            return new WebAssemblyHttpHandler().StreamingEnabled;
+            using (HttpClient httpClient = CreateHttpClient())
+                return WebAssemblyHttpHandler.StreamingEnabled;
         }
 
         public static string BasePath()
@@ -36,13 +36,12 @@ namespace TestSuite
 
             try
             {
-                using (HttpClient httpClient = CreateHttpClient(streamingEnabled))
+                using (HttpClient httpClient = CreateHttpClient())
                 {
                     Console.WriteLine($"streaming supported: { WebAssemblyHttpHandler.StreamingSupported}");
-                    Console.WriteLine($"streaming enabled: {streamingEnabled}");
-                    var request = new HttpRequestMessage(HttpMethod.Get, url);
-
-                    using (var rspMsg = await httpClient.SendAsync(request, cts.Token))
+                    WebAssemblyHttpHandler.StreamingEnabled = streamingEnabled;
+                    Console.WriteLine($"streaming enabled: {WebAssemblyHttpHandler.StreamingEnabled}");
+                    using (var rspMsg = await httpClient.GetAsync(url, cts.Token))
                     {
                         requestTcs.SetResult((int)rspMsg.Content?.ReadAsStreamAsync().Result.Length);
                     }
@@ -63,10 +62,11 @@ namespace TestSuite
 
             try
             {
-                using (HttpClient httpClient = CreateHttpClient(streamingEnabled))
+                using (HttpClient httpClient = CreateHttpClient())
                 {
-                    Console.WriteLine($"streaming supported: { WasmHttpMessageHandler.StreamingSupported}");
-                    Console.WriteLine($"streaming enabled: {WasmHttpMessageHandler.StreamingEnabled}");
+                    Console.WriteLine($"streaming supported: { WebAssemblyHttpHandler.StreamingSupported}");
+                    WebAssemblyHttpHandler.StreamingEnabled = streamingEnabled;
+                    Console.WriteLine($"streaming enabled: {WebAssemblyHttpHandler.StreamingEnabled}");
                     Console.WriteLine($"url: {url}");
 
                     using (var rspMsg = await httpClient.GetAsync(url, cts.Token))
@@ -95,7 +95,7 @@ namespace TestSuite
             return requestTcs.Task;
         }
 
-        static HttpClient CreateHttpClient(bool streamingEnabled = true)
+        static HttpClient CreateHttpClient()
         {
             //Console.WriteLine("Create  HttpClient");
             string BaseApiUrl = string.Empty;
@@ -104,8 +104,8 @@ namespace TestSuite
             {
                 BaseApiUrl = (string)location.GetObjectProperty("origin");
             }
-            var httpHandler = new WebAssemblyHttpHandler { StreamingEnabled = streamingEnabled };
-            return new HttpClient(httpHandler) { BaseAddress = new Uri(BaseApiUrl) };
+            WebAssemblyHttpHandler.StreamingEnabled = true;
+            return new HttpClient() { BaseAddress = new Uri(BaseApiUrl) };
         }
     }
 }

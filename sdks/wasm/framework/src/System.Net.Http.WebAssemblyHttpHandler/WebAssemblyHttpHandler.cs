@@ -49,15 +49,14 @@ namespace System.Net.Http
 		public string Integrity { get; set; }
 
 		/// <summary>
-		/// Gets or sets a value that determines if streaming responses are allowed.
-		/// This property only has effect if <see cref="StreamingSupported" /> is <c>true</c>.
-		/// </summary>
-		public bool StreamingEnabled { get; set; }
-
-		/// <summary>
 		/// Gets whether the current Browser supports streaming responses
 		/// </summary>
 		public static bool StreamingSupported { get; }
+
+		/// <summary>
+		/// Gets or sets whether responses should be streamed if supported
+		/// </summary>
+		public static bool StreamingEnabled { get; set; } = false;
 
 		static WebAssemblyHttpHandler()
 		{
@@ -99,19 +98,19 @@ namespace System.Net.Http
 				if (RequestCredentials != null) {
 					// See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
 					// standard values and meanings
-					requestObject.SetObjectProperty ("credentials", GetStringValue(RequestCredentials.Value));
+					requestObject.SetObjectProperty("credentials", RequestCredentials.Value);
 				}
 
 				if (RequestCache != null) {
 					// See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
 					// standard values and meanings
-					requestObject.SetObjectProperty ("cache", GetStringValue(RequestCache.Value));
+					requestObject.SetObjectProperty ("cache", RequestCache.Value);
 				}
 
 				if (RequestMode != null) {
 					// See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
 					// standard values and meanings
-					requestObject.SetObjectProperty ("mode", GetStringValue(RequestMode.Value));
+					requestObject.SetObjectProperty ("mode", RequestMode.Value);
 				}
 
 				if (Integrity != null) {
@@ -173,7 +172,7 @@ namespace System.Net.Http
 					wasmHttpReadStream?.Dispose ();
 				}));
 
-				var args = new Core.Array();
+				var args = new WebAssembly.Core.Array();
 				args.Push (request.RequestUri.ToString ());
 				args.Push (requestObject);
 
@@ -238,59 +237,6 @@ namespace System.Net.Http
 				tcs.SetResult (httpresponse);
 			} catch (Exception exception) {
 				tcs.SetException (exception);
-			}
-		}
-
-		private static string GetStringValue(RequestMode requestMode)
-		{
-			switch (requestMode)
-			{
-				case System.Net.Http.RequestMode.SameOrigin:
-					return "same-origin";
-				case System.Net.Http.RequestMode.NoCors:
-					return "no-cors";
-				case System.Net.Http.RequestMode.Cors:
-					return "cors";
-				case System.Net.Http.RequestMode.Navigate:
-					return "navigate";
-				default:
-					throw new InvalidOperationException($"Unsupported {nameof(RequestCache)} value {requestMode}.");
-			};
-		}
-
-		private static string GetStringValue(RequestCache requestCache)
-		{
-			switch (requestCache)
-			{
-				case System.Net.Http.RequestCache.Default:
-					return "default";
-				case System.Net.Http.RequestCache.NoStore:
-					return "no-store";
-				case System.Net.Http.RequestCache.Reload:
-					return "reload";
-				case System.Net.Http.RequestCache.NoCache:
-					return "no-cache";
-				case System.Net.Http.RequestCache.ForceCache:
-					return "force-cache";
-				case System.Net.Http.RequestCache.OnlyIfCached:
-					return "only-if-cached";
-				default:
-					throw new InvalidOperationException($"Unsupported {nameof(RequestCache)} value {requestCache}.");
-			};
-		}
-
-		private static string GetStringValue(RequestCredentials requestCredentials)
-		{
-			switch (requestCredentials)
-			{
-				case System.Net.Http.RequestCredentials.Include:
-					return "omit";
-				case System.Net.Http.RequestCredentials.Omit:
-					return "same-origin";
-				case System.Net.Http.RequestCredentials.SameOrigin:
-					return "same-origin";
-				default:
-					throw new InvalidOperationException($"Unsupported {nameof(RequestCredentials)} value: {requestCredentials}.");
 			}
 		}
 
@@ -533,4 +479,106 @@ namespace System.Net.Http
 			}
 		}
 	}
+
+
+	/// <summary>
+	/// Specifies a value for the 'credentials' option on outbound HTTP requests.
+	/// </summary>
+	public enum RequestCredentials {
+		/// <summary>
+		/// Advises the browser never to send credentials (such as cookies or HTTP auth headers).
+		/// </summary>
+		[Export (EnumValue = ConvertEnum.ToLower)]
+		Omit,
+
+		/// <summary>
+		/// Advises the browser to send credentials (such as cookies or HTTP auth headers)
+		/// only if the target URL is on the same origin as the calling application.
+		/// </summary>
+		[Export ("same-origin")]
+		SameOrigin,
+
+		/// <summary>
+		/// Advises the browser to send credentials (such as cookies or HTTP auth headers)
+		/// even for cross-origin requests.
+		/// </summary>
+		[Export (EnumValue = ConvertEnum.ToLower)]
+		Include,
+	}
+
+
+	/// <summary>
+	/// The cache mode of the request. It controls how the request will interact with the browser's HTTP cache.
+	/// </summary>
+	public enum RequestCache {
+		/// <summary>
+		/// The browser looks for a matching request in its HTTP cache.
+		/// </summary>
+		[Export (EnumValue = ConvertEnum.ToLower)]
+		Default,
+
+		/// <summary>
+		/// The browser fetches the resource from the remote server without first looking in the cache,
+		/// and will not update the cache with the downloaded resource.
+		/// </summary>
+		[Export ("no-store")]
+		NoStore,
+
+		/// <summary>
+		/// The browser fetches the resource from the remote server without first looking in the cache,
+		/// but then will update the cache with the downloaded resource.
+		/// </summary>
+		[Export (EnumValue = ConvertEnum.ToLower)]
+		Reload,
+
+		/// <summary>
+		/// The browser looks for a matching request in its HTTP cache.
+		/// </summary>
+		[Export ("no-cache")]
+		NoCache,
+
+		/// <summary>
+		/// The browser looks for a matching request in its HTTP cache.
+		/// </summary>
+		[Export ("force-cache")]
+		ForceCache,
+
+		/// <summary>
+		/// The browser looks for a matching request in its HTTP cache.
+		/// Mode can only be used if the request's mode is "same-origin"
+		/// </summary>
+		[Export ("only-if-cached")]
+		OnlyIfCached,
+	}
+
+	/// <summary>
+	/// The mode of the request. This is used to determine if cross-origin requests lead to valid responses
+	/// </summary>
+	public enum RequestMode {
+		/// <summary>
+		/// If a request is made to another origin with this mode set, the result is simply an error
+		/// </summary>
+		[Export ("same-origin")]
+		SameOrigin,
+
+		/// <summary>
+		/// Prevents the method from being anything other than HEAD, GET or POST, and the headers from
+		/// being anything other than simple headers.
+		/// </summary>
+		[Export ("no-cors")]
+		NoCors,
+
+		/// <summary>
+		/// Allows cross-origin requests, for example to access various APIs offered by 3rd party vendors.
+		/// </summary>
+		[Export (EnumValue = ConvertEnum.ToLower)]
+		Cors,
+
+		/// <summary>
+		/// A mode for supporting navigation.
+		/// </summary>
+		[Export (EnumValue = ConvertEnum.ToLower)]
+		Navigate,
+	}
+
 }
