@@ -33,6 +33,8 @@
   <ItemGroup>
     <Folder Include="Core\" />
     <Folder Include="Host\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\IServices\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.2" />

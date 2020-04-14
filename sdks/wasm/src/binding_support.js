@@ -101,6 +101,9 @@ var BindingSupportLib = {
 			this.create_uri = get_method ("CreateUri");
 
 			this.object_to_enum = get_method ("ObjectToEnum");
+
+			this.locate_service = get_method ("LocateService");
+
 			this.init = true;
 		},
 
@@ -926,6 +929,11 @@ var BindingSupportLib = {
 			}
 			throw Error('Unable to get mono wasm global object.');
 		},
+		mono_locate_service: function(type) {
+			this.bindings_lazy_init ();
+
+			return this.call_method (this.locate_service, null, "mo", [ type ]);
+		},
 	
 	},
 
@@ -1265,6 +1273,14 @@ var BindingSupportLib = {
 
 		var res = BINDING.typedarray_copy_from(requireObject, pinned_array, begin, end, bytes_per_element);
 		return BINDING.js_to_mono_obj (res)
+	},
+	mono_wasm_resolve_by_type: function(type, is_exception) {
+		BINDING.bindings_lazy_init ();
+		console.log("mono_wasm_resolve_by_type");
+		var resolvedService = BINDING.mono_locate_service (type);
+		var unboxedService = BINDING.js_to_mono_obj (resolvedService);
+		BINDING.mono_wasm_unregister_obj(resolvedService.__mono_jshandle__);
+		return unboxedService;
 	},
 
 

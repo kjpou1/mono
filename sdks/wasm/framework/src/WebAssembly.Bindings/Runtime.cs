@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using WebAssembly.Services;
+using WebAssembly.Services.IServices;
 
 namespace WebAssembly {
 	/// <summary>
@@ -77,9 +79,13 @@ namespace WebAssembly {
 
 		static Dictionary<int, JSObject> bound_objects = new Dictionary<int, JSObject> ();
 		static Dictionary<object, JSObject> raw_to_js = new Dictionary<object, JSObject> ();
+		static BindingsContainer bindingsContainer = new BindingsContainer ();
 
 		static Runtime ()
-		{ }
+		{ 
+			//Register();
+			bindingsContainer.Register<IHttpHandlerService, WebAssemblyHttpHandlerService> ();
+		}
 
 		/// <summary>
 		/// Creates a new JavaScript object of the specified type
@@ -614,6 +620,42 @@ namespace WebAssembly {
 			// Send it to JS
 			var js_dump = (JSObject)Runtime.GetGlobalObject ("Module");
 			js_dump.SetObjectProperty ("coverage_profile_data", data);
+		}
+
+		/// <summary>
+		/// Register a service type
+		/// </summary>
+		/// <typeparam name="TFrom"></typeparam>
+		/// <typeparam name="TTo"></typeparam>
+		public static void Register<TFrom, TTo> ()
+		{
+			Register (typeof(TFrom), typeof(TTo));
+		}
+
+		/// <summary>
+		/// Register a service type
+		/// </summary>
+		/// <param name="TFrom"></param>
+		/// <param name="TTo"></param>
+		public static void Register (Type TFrom, Type TTo)
+		{
+			bindingsContainer.Register (TFrom, TTo);
+		}
+
+		/// <summary>
+		/// Locate a service that is requested
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static object LocateService (Type type)
+		{
+			if (type == null)
+				throw new ArgumentNullException (nameof (type), "Value can not be null");
+
+			
+			var resolvedType = bindingsContainer.Resolve (type);
+			//Console.WriteLine ($"locating service for {type} / {resolvedType}");
+			return resolvedType;
 		}
 	}
 }
