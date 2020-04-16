@@ -62,8 +62,6 @@ class Driver {
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
-	const string HTTP_ASM_NAME = "System.Net.Http.WebAssemblyHttpHandler";
-	const string WEBSOCKETS_ASM_NAME = "WebAssembly.Net.WebSockets";
 	const string BINDINGS_MODULE = "corebindings.o";
 	const string BINDINGS_MODULE_SUPPORT = "$tool_prefix/src/binding_support.js";
 
@@ -611,10 +609,6 @@ class Driver {
 		if (add_binding) {
 			var bindings = ResolveFramework (BINDINGS_ASM_NAME + ".dll");
 			Import (bindings, AssemblyKind.Framework);
-			var http = ResolveFramework (HTTP_ASM_NAME + ".dll");
-			Import (http, AssemblyKind.Framework);
-			var websockets = ResolveFramework (WEBSOCKETS_ASM_NAME + ".dll");
-			Import (websockets, AssemblyKind.Framework);
 		}
 
 		if (enable_aot) {
