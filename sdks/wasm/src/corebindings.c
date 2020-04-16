@@ -87,10 +87,9 @@ void core_initialize_internals ()
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayFrom", mono_wasm_typed_array_from);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyFrom", mono_wasm_typed_array_copy_from);
 	mono_add_internal_call ("WebAssembly.Runtime::CompileFunction", mono_wasm_compile_function);
-	mono_add_internal_call ("System.Net.Http.HttpClientHandler::Resolve", mono_wasm_resolve);
 	mono_add_internal_call ("System.Net.Http.HttpClientHandler::ResolveByType", mono_wasm_resolve_by_type);
-	mono_add_internal_call ("System.Net.Http.HttpClient::Resolve", mono_wasm_resolve);
 	mono_add_internal_call ("System.Net.Http.HttpClient::ResolveByType", mono_wasm_resolve_by_type);
+	mono_add_internal_call ("System.Net.WebSockets.WebSocketHandle::ResolveByType", mono_wasm_resolve_by_type);
 
 }
 
