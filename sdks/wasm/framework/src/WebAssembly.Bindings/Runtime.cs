@@ -91,7 +91,6 @@ namespace WebAssembly {
 		{
 			bindingsContainer.RegisterType<IHttpHandlerService, WebAssemblyHttpHandlerService> ();
 			bindingsContainer.RegisterType<IWebSocketHandleService, WebSocketHandleService> ();
-			bindingsContainer.RegisterType<System.Net.WebSockets.ClientWebSocket, WebAssembly.Net.WebSockets.ClientWebSocket> ();
 		}
 
 		/// <summary>
@@ -648,6 +647,20 @@ namespace WebAssembly {
 		{
 			bindingsContainer.RegisterType (TFrom, TTo);
 		}
+
+		/// <summary>
+		/// Locate a service that is requested
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static TTo LocateService <TFrom, TTo> () => (TTo)LocateService (typeof (TFrom));
+
+		/// <summary>
+		/// Locate a service that is requested
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static TFrom LocateService<TFrom> () => (TFrom)LocateService (typeof (TFrom));
 
 		/// <summary>
 		/// Locate a service that is requested

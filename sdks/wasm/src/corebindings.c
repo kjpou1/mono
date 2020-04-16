@@ -87,33 +87,7 @@ void core_initialize_internals ()
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayFrom", mono_wasm_typed_array_from);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyFrom", mono_wasm_typed_array_copy_from);
 	mono_add_internal_call ("WebAssembly.Runtime::CompileFunction", mono_wasm_compile_function);
-	mono_add_internal_call ("System.Net.Http.HttpClientHandler::ResolveByType", mono_wasm_resolve_by_type);
-	mono_add_internal_call ("System.Net.Http.HttpClient::ResolveByType", mono_wasm_resolve_by_type);
-	mono_add_internal_call ("System.Net.WebSockets.WebSocketHandle::ResolveByType", mono_wasm_resolve_by_type);
-
 }
-
-EMSCRIPTEN_KEEPALIVE MonoObject*
-mono_wasm_resolve (MonoString* type)
-{
-	//mono_unichar2 *native_val = mono_string_chars (type);
-	char *native_val = mono_string_to_utf8 (type);
-	fprintf (stderr, "mono_wasm_resolve: %s\n", native_val);
-
-	mono_free (native_val);
-	return NULL;
-}
-
-// MonoObject*
-// mono_wasm_resolve_by_type (MonoType* type)
-// {
-// 	//mono_unichar2 *native_val = mono_string_chars (type);
-// 	//char *type_name = mono_type_get_name_full  (type, MONO_TYPE_NAME_FORMAT_FULL_NAME);
-// 	fprintf (stderr, "mono_wasm_resolve_by_type: %s\n", "type_name");
-
-// 	//mono_free (type_name);
-// 	return NULL;
-// }
 
 // Int8Array 		| int8_t	| byte or SByte (signed byte)
 // Uint8Array		| uint8_t	| byte or Byte (unsigned byte)

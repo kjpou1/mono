@@ -38,6 +38,7 @@
     <Folder Include="Services\WebSockets\" />
     <Folder Include="Net\" />
     <Folder Include="Net\WebSockets\" />
+    <Folder Include="Net\Http\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.2" />

@@ -8,21 +8,16 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
-
 
 namespace System.Net.Http
 {
 	public class HttpClientHandler : HttpMessageHandler
 	{
-		WebAssembly.Services.IServices.IHttpHandlerService wasmHandler;
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object ResolveByType (Type type);
+		System.Net.Http.WebAssemblyHttpHandler wasmHandler;
 
 		public HttpClientHandler ()
 		{
-			wasmHandler = ResolveByType (typeof(WebAssembly.Services.IServices.IHttpHandlerService)) as WebAssembly.Services.IServices.IHttpHandlerService;
-			Console.WriteLine($"HttpClientHandler {wasmHandler}");
+			wasmHandler = new System.Net.Http.WebAssemblyHttpHandler();
 		}
 
 		protected override void Dispose (bool disposing)

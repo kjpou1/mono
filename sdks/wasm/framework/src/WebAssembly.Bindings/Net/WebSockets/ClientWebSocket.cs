@@ -24,6 +24,12 @@ namespace WebAssembly.Net.WebSockets {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/> class.
 		/// </summary>
+		public ClientWebSocket () : this(WebAssembly.Runtime.LocateService<IWebSocketHandleService> ())
+		{ }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/> class.
+		/// </summary>
 		public ClientWebSocket (IWebSocketHandleService websocketHandle)
 		{
 			this.websocketHandle = websocketHandle;
