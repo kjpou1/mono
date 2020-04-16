@@ -35,6 +35,9 @@
     <Folder Include="Host\" />
     <Folder Include="Services\" />
     <Folder Include="Services\IServices\" />
+    <Folder Include="Services\WebSockets\" />
+    <Folder Include="Net\" />
+    <Folder Include="Net\WebSockets\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.2" />

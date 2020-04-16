@@ -12,12 +12,12 @@ namespace WebAssembly {
 		{
 		}
 
-		public void Register<TFrom, TTo> ()
+		public void RegisterType<TFrom, TTo> ()
 		{
-			Register (typeof (TFrom), typeof (TTo));
+			RegisterType (typeof (TFrom), typeof (TTo));
 		}
 
-		public void Register (Type TFrom, Type TTo)
+		public void RegisterType (Type TFrom, Type TTo)
 		{
 			containerMap.Add (TFrom, TTo);
 		}

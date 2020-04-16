@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using WebAssembly.Services;
+using WebAssembly.Services.WebSockets;
 using WebAssembly.Services.IServices;
 
 namespace WebAssembly {
@@ -82,9 +83,15 @@ namespace WebAssembly {
 		static BindingsContainer bindingsContainer = new BindingsContainer ();
 
 		static Runtime ()
-		{ 
-			//Register();
-			bindingsContainer.Register<IHttpHandlerService, WebAssemblyHttpHandlerService> ();
+		{
+			ConfigureServices ();
+		}
+
+		static void ConfigureServices ()
+		{
+			bindingsContainer.RegisterType<IHttpHandlerService, WebAssemblyHttpHandlerService> ();
+			bindingsContainer.RegisterType<IWebSocketHandleService, WebSocketHandleService> ();
+			bindingsContainer.RegisterType<System.Net.WebSockets.ClientWebSocket, WebAssembly.Net.WebSockets.ClientWebSocket> ();
 		}
 
 		/// <summary>
@@ -639,7 +646,7 @@ namespace WebAssembly {
 		/// <param name="TTo"></param>
 		public static void Register (Type TFrom, Type TTo)
 		{
-			bindingsContainer.Register (TFrom, TTo);
+			bindingsContainer.RegisterType (TFrom, TTo);
 		}
 
 		/// <summary>

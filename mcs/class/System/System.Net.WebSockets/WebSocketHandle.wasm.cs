@@ -13,6 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace System.Net.WebSockets
 {
@@ -34,6 +35,9 @@ namespace System.Net.WebSockets
         public string SubProtocol => _webSocket?.SubProtocol;
 
         public static void CheckPlatformSupport() { /* nop */ }
+
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object ResolveByType (Type type);
 
         public void Dispose()
         {
@@ -76,7 +80,7 @@ namespace System.Net.WebSockets
             CancellationTokenRegistration registration = cancellationToken.Register(s => ((WebSocketHandle)s).Abort(), this);
             try
             {
-                _webSocket = new WebAssembly.Net.WebSockets.ClientWebSocket ();//(options);
+                _webSocket = ResolveByType (typeof(System.Net.WebSockets.ClientWebSocket)) as WebAssembly.Net.WebSockets.ClientWebSocket;
                 foreach (var t in options.RequestedSubProtocols) {
                     _webSocket.Options.AddSubProtocol (t);
                 }

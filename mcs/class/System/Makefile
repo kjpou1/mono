@@ -117,7 +117,7 @@ LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
 
 ifeq (wasm,$(PROFILE))
-API_BIN_REFS += WebAssembly.Net.WebSockets
+API_BIN_REFS += WebAssembly.Bindings
 endif
 
 EXTRA_DISTFILES = \

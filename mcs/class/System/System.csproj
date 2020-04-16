@@ -5108,9 +5108,9 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.WebSockets.dll">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Bindings.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.WebSockets.dll</HintPath>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monowasm/WebAssembly.Bindings.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
