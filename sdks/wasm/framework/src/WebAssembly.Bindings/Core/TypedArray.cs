@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -106,16 +107,11 @@ namespace WebAssembly.Core {
 
 		private U? UnBoxValue (object jsValue)
 		{
-			if (jsValue != null) {
-				var type = jsValue.GetType ();
-				if (type.IsPrimitive) {
-					return (U)Convert.ChangeType (jsValue, typeof (U));
-				} else {
-					throw new InvalidCastException ($"Unable to cast object of type {type} to type {typeof (U)}.");
-				}
-
-			} else
+			if (jsValue == null)
 				return null;
+
+			var type = jsValue.GetType ();
+			return (U)Convert.ChangeType (jsValue, typeof (U));
 		}
 
 		/// <summary>
@@ -138,7 +134,10 @@ namespace WebAssembly.Core {
 		public unsafe static T From (ReadOnlySpan<U> span)
 		{
 			// source has to be instantiated.
-			ValidateFromSource (span);
+			if (span == null) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (span)} can not be null.");
+			}
+
 
 			TypedArrayTypeCode type = (TypedArrayTypeCode)Type.GetTypeCode (typeof (U));
 			// Special case for Uint8ClampedArray, a clamped array which represents an array of 8-bit unsigned integers clamped to 0-255;
@@ -171,15 +170,6 @@ namespace WebAssembly.Core {
 			}
 		}
 
-		private unsafe int CopyFrom (void* ptrSource, int offset, int count)
-		{
-			var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)ptrSource, offset, offset + count, Marshal.SizeOf<U> (), out int exception);
-			if (exception != 0)
-				throw new JSException ((string)res);
-			return (int)res / Marshal.SizeOf<U> ();
-
-		}
-
 		/// <summary>
 		/// Copies from a <see cref="T:Span{T}"/> to the <see cref="T:WebAssembly.Core.TypedArray`2"/> memory.
 		/// </summary>
@@ -187,7 +177,10 @@ namespace WebAssembly.Core {
 		/// <param name="span">ReadOnlySpan.</param>
 		public unsafe int CopyFrom (ReadOnlySpan<U> span)
 		{
-			ValidateSource (span);
+			// target has to be instantiated.
+			if (span == null || span.Length == 0) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (span)} can not be null and must have a length");
+			}
 			var bytes = MemoryMarshal.AsBytes (span);
 			fixed (byte* ptr = bytes) {
 				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)ptr, 0, span.Length, Marshal.SizeOf<U> (), out int exception);
@@ -195,52 +188,6 @@ namespace WebAssembly.Core {
 					throw new JSException ((string)res);
 				return (int)res / Marshal.SizeOf<U> ();
 			}
-		}
-
-		protected void ValidateTarget (Span<U> target)
-		{
-			// target array has to be instantiated.
-			if (target == null || target.Length == 0) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (target)} can not be null and must have a length");
-			}
-
-		}
-
-		protected void ValidateSource (ReadOnlySpan<U> source)
-		{
-			// target has to be instantiated.
-			if (source == null || source.Length == 0) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null and must have a length");
-			}
-
-		}
-
-		protected static void ValidateFromSource (ReadOnlySpan<U> source)
-		{
-			// target array has to be instantiated.
-			if (source == null) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null.");
-			}
-
-		}
-
-
-		protected static void ValidateFromSource (U [] source, int offset, int count)
-		{
-			// target array has to be instantiated.
-			if (source == null) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null.");
-			}
-
-			// offset can not be past the end of the array
-			if (offset > source.Length) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} can not be greater than length of '{nameof (source)}'");
-			}
-			// offset plus count can not pass the end of the array.
-			if (offset + count > source.Length) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} plus {nameof (count)} can not be greater than length of '{nameof (source)}'");
-			}
-
 		}
 
 	}

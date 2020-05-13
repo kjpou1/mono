@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 
 namespace WebAssembly {
 
@@ -7,7 +8,7 @@ namespace WebAssembly {
 	///   they retain a reference to the JavaScript object for the lifetime of this C# object.
 	/// </summary>
 	public class JSObject : AnyRef, IJSObject, IDisposable {
-		internal object RawObject;
+		internal object? RawObject;
 
 		// to detect redundant calls
 		public bool IsDisposed { get; internal set; }
@@ -54,7 +55,7 @@ namespace WebAssembly {
 		///     valuews.
 		///   </para>
 		/// </returns>
-		public object Invoke (string method, params object [] args)
+		public object Invoke (string method, params object? [] args)
 		{
 			var res = Runtime.InvokeJSWithArgs (JSHandle, method, args, out int exception);
 			if (exception != 0)
@@ -146,12 +147,12 @@ namespace WebAssembly {
 				throw new JSException ($"Error releasing handle on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");
 		}
 
-		public override bool Equals (System.Object obj)
+		public override bool Equals (object? obj)
 		{
 			if (obj == null || GetType () != obj.GetType ()) {
 				return false;
 			}
-			return JSHandle == (obj as JSObject).JSHandle;
+			return JSHandle == (obj as JSObject)?.JSHandle;
 		}
 
 		public override int GetHashCode ()
